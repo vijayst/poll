@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Label, Divider } from 'semantic-ui-react';
-
+import firebase from '../util/firebase';
 import {
     createValidator,
     composeValidators,
@@ -45,7 +45,7 @@ export default function Register() {
     const [repeat, setRepeat] = useState('');
     const [error, setError] = useState({});
 
-    function handleSubmit() {
+    async function handleSubmit() {
         const formObj = {
             name,
             email,
@@ -54,8 +54,15 @@ export default function Register() {
         };
         const errors = formValidator(formObj);
         if (Object.values(errors).every(error => !error)) {
-            // submit the form
-            console.log('submit form');
+            const result = await firebase
+                .auth()
+                .createUserWithEmailAndPassword(
+                    email,
+                    password
+                );
+            await result.user.updateProfile({
+                displayName: name
+            });
         } else {
             setError(errors);
         }
