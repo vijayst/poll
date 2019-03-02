@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Label } from 'semantic-ui-react';
+import { Form, Button, Label, Divider } from 'semantic-ui-react';
 
 import {
     createValidator,
@@ -9,6 +9,8 @@ import {
     hasLengthGreaterThan,
     matchesField
 } from 'revalidate';
+
+import styles from './register.module.css';
 
 const isEmail = createValidator(
     message => value => {
@@ -55,13 +57,12 @@ export default function Register() {
             // submit the form
             console.log('submit form');
         } else {
-            console.log(errors);
             setError(errors);
         }
     }
 
     return (
-        <div>
+        <div className={styles.register}>
             <h1>Register</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Field error={error.name}>
@@ -71,7 +72,11 @@ export default function Register() {
                         value={name}
                         onChange={e => setName(e.target.value)}
                     />
-                    {error.name && <Label basic color="red" pointing>{error.name}</Label>}
+                    {error.name && (
+                        <Label basic color="red" pointing>
+                            {error.name}
+                        </Label>
+                    )}
                 </Form.Field>
                 <Form.Field error={error.email}>
                     <label>Email</label>
@@ -80,7 +85,11 @@ export default function Register() {
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
-                    {error.email && <Label basic color="red" pointing>{error.email}</Label>}
+                    {error.email && (
+                        <Label basic color="red" pointing>
+                            {error.email}
+                        </Label>
+                    )}
                 </Form.Field>
                 <Form.Field error={error.password}>
                     <label>Password</label>
@@ -90,7 +99,11 @@ export default function Register() {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-                    {error.password && <Label basic color="red" pointing>{error.password}</Label>}
+                    {error.password && (
+                        <Label basic color="red" pointing>
+                            {error.password}
+                        </Label>
+                    )}
                 </Form.Field>
                 <Form.Field error={error.repeat}>
                     <label>Repeat password</label>
@@ -100,12 +113,26 @@ export default function Register() {
                         value={repeat}
                         onChange={e => setRepeat(e.target.value)}
                     />
-                    {error.repeat && <Label basic color="red" pointing>{error.repeat}</Label>}
+                    {error.repeat && (
+                        <Label basic color="red" pointing>
+                            {error.repeat}
+                        </Label>
+                    )}
                 </Form.Field>
-                <Button primary type="submit">
-                    Submit
-                </Button>
+                <div className={styles.button}>
+                    <Button primary type="submit">
+                        Submit
+                    </Button>
+                </div>
             </Form>
+            <Divider style={{ margin: '2rem 0' }} horizontal>
+                Or
+            </Divider>
+            <div className={styles.button}>
+                <Button color="red">
+                    Login as Google
+                </Button>
+            </div>
         </div>
     );
 }
