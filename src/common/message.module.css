@@ -1,0 +1,27 @@
+.message {
+    position: fixed;
+    height: 3rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: lightgreen;
+    color: black;
+    transition: opacity 200ms;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error {
+    position: fixed;
+    height: 3rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: lightcoral;
+    color: white;
+    transition: opacity 200ms;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
