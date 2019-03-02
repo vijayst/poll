@@ -1,3 +1,15 @@
 .app {
     text-align: center;
 }
+
+.app header {
+    display: flex;
+    background-color: royalblue;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    color: white;
+    font-size: 2.4rem;
+}
