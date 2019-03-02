@@ -3,7 +3,6 @@
 }
 
 header {
-    position: fixed;
     display: flex;
     height: 5rem;
     width: 100%;
