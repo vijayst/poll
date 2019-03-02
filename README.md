@@ -9,5 +9,9 @@ Online polls
 5) User profile page - Name, City, Photo
 
 ## Tech stack
-ReactJS, Firestore, Firebase Auth, Semantic UI
+1) ReactJS
+2) Firestore
+3) Firebase Auth
+4) Semantic UI
+
 No Redux, use useReducer hook only
