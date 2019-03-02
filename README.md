@@ -6,7 +6,7 @@ Online polls
 2) Allow users to create simple polls
 3) Polls will auto-close in 30 days
 4) Home page with latest polls
-5) User profile page - Name, City, Photo
+5) User profile page - Name, Photo
 
 ## Tech stack
 1) ReactJS
