@@ -1,5 +1,8 @@
 .app {
-    text-align: center;
+    max-width: 800px;
+    min-height: 100vh;
+    margin: 0 auto;
+    border: 1px solid #f0f0f0;
 }
 
 header {
@@ -9,6 +12,10 @@ header {
     background-color: royalblue;
     align-items: center;
     justify-content: space-between;
+}
+
+main {
+    padding: 2rem;
 }
 
 .brand {
