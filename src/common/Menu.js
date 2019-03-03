@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Menu } from 'semantic-ui-react';
-import { withRouter } from 'react-router-dom';
+import { Menu, Dropdown } from 'semantic-ui-react';
+import { withRouter, Link } from 'react-router-dom';
 import firebase from '../util/firebase';
 
 const ROUTE_MAP = {
@@ -13,16 +13,23 @@ const ROUTE_MAP = {
 
 function MyMenu(props) {
     const [activeItem, setActiveItem] = useState('home');
-    const user = firebase.auth().currentUser;
-    const [loggedIn, setLoggedIn] = useState(!!user);
+    const { currentUser } = firebase.auth();
+    const [user, setUser] = useState(currentUser);
+    const loggedIn = !!user;
 
-    firebase.auth().onAuthStateChanged(user => {
-        setLoggedIn(!!user);
+    firebase.auth().onAuthStateChanged(currentUser => {
+        setUser(currentUser);
     });
+
 
     function handleItemClick(e, { name }) {
         setActiveItem(name);
         props.history.push(ROUTE_MAP[name]);
+    }
+
+    async function handleLogout() {
+        await firebase.auth().signOut();
+        props.history.push('/login');
     }
 
     return loggedIn ? (
@@ -45,12 +52,18 @@ function MyMenu(props) {
                 content="Create Poll"
                 onClick={handleItemClick}
             />
-            <Menu.Item
-                name="logout"
-                active={activeItem === 'logout'}
-                content="Logout"
-                onClick={handleItemClick}
-            />
+            <Menu.Item>
+                <Dropdown pointing="top left" text={user.displayName}>
+                <Dropdown.Menu>
+                    <Dropdown.Item as={Link} to={`/profile`} text="My Profile" icon="user" />
+                    <Dropdown.Item
+                        text="Sign Out"
+                        icon="power"
+                        onClick={handleLogout}
+                    />
+                </Dropdown.Menu>
+                </Dropdown>
+            </Menu.Item>
         </Menu>
     ) : (
         <Menu inverted secondary style={{ marginTop: 0, marginRight: 24 }}>
