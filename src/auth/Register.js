@@ -100,79 +100,77 @@ export default function Register(props) {
     }
 
     return (
-        <>
-            <div className={styles.register}>
-                <h1>Register</h1>
-                <Form onSubmit={handleSubmit}>
-                    <Form.Field error={!!error.name}>
-                        <label>Name</label>
-                        <input
-                            placeholder="Display Name"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                        />
-                        {error.name && (
-                            <Label basic color="red" pointing>
-                                {error.name}
-                            </Label>
-                        )}
-                    </Form.Field>
-                    <Form.Field error={!!error.email}>
-                        <label>Email</label>
-                        <input
-                            placeholder="Email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        {error.email && (
-                            <Label basic color="red" pointing>
-                                {error.email}
-                            </Label>
-                        )}
-                    </Form.Field>
-                    <Form.Field error={!!error.password}>
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        />
-                        {error.password && (
-                            <Label basic color="red" pointing>
-                                {error.password}
-                            </Label>
-                        )}
-                    </Form.Field>
-                    <Form.Field error={!!error.repeat}>
-                        <label>Repeat password</label>
-                        <input
-                            type="password"
-                            placeholder="Repeat Password"
-                            value={repeat}
-                            onChange={e => setRepeat(e.target.value)}
-                        />
-                        {error.repeat && (
-                            <Label basic color="red" pointing>
-                                {error.repeat}
-                            </Label>
-                        )}
-                    </Form.Field>
-                    <div className={styles.button}>
-                        <Button primary type="submit">
-                            Submit
-                        </Button>
-                    </div>
-                </Form>
-                <Divider style={{ margin: '2rem 0' }} horizontal>
-                    Or
-                </Divider>
+        <div className={styles.register}>
+            <h1>Register</h1>
+            <Form onSubmit={handleSubmit}>
+                <Form.Field error={!!error.name}>
+                    <label>Name</label>
+                    <input
+                        placeholder="Display Name"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                    />
+                    {error.name && (
+                        <Label basic color="red" pointing>
+                            {error.name}
+                        </Label>
+                    )}
+                </Form.Field>
+                <Form.Field error={!!error.email}>
+                    <label>Email</label>
+                    <input
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                    {error.email && (
+                        <Label basic color="red" pointing>
+                            {error.email}
+                        </Label>
+                    )}
+                </Form.Field>
+                <Form.Field error={!!error.password}>
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                    />
+                    {error.password && (
+                        <Label basic color="red" pointing>
+                            {error.password}
+                        </Label>
+                    )}
+                </Form.Field>
+                <Form.Field error={!!error.repeat}>
+                    <label>Repeat password</label>
+                    <input
+                        type="password"
+                        placeholder="Repeat Password"
+                        value={repeat}
+                        onChange={e => setRepeat(e.target.value)}
+                    />
+                    {error.repeat && (
+                        <Label basic color="red" pointing>
+                            {error.repeat}
+                        </Label>
+                    )}
+                </Form.Field>
                 <div className={styles.button}>
-                    <Button color="red" onClick={handleGoogle}>
-                        Login as Google
+                    <Button primary type="submit">
+                        Submit
                     </Button>
                 </div>
+            </Form>
+            <Divider style={{ margin: '2rem 0' }} horizontal>
+                Or
+            </Divider>
+            <div className={styles.button}>
+                <Button color="red" onClick={handleGoogle}>
+                    Login as Google
+                </Button>
             </div>
-        </>
+        </div>
     );
 }
