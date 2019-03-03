@@ -24,7 +24,6 @@ function messageReducer(state, action) {
 
 function App(props) {
     const [message, dispatch] = useReducer(messageReducer, {});
-    console.log('message', message);
     return (
         <MessageDispatchContext.Provider value={dispatch}>
             <div className={styles.app}>

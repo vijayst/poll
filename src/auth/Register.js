@@ -81,6 +81,24 @@ export default function Register(props) {
         }
     }
 
+    async function handleGoogle() {
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await firebase.auth().signInWithPopup(provider);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: { text: 'User is created' }
+            });
+            props.history.push('/');
+        } catch (err) {
+            console.log(err);
+            dispatch({
+                type: 'SET_MESSAGE',
+                payload: { text: 'Error in creating user', error: true }
+            });
+        }
+    }
+
     return (
         <>
             <div className={styles.register}>
@@ -150,7 +168,9 @@ export default function Register(props) {
                     Or
                 </Divider>
                 <div className={styles.button}>
-                    <Button color="red">Login as Google</Button>
+                    <Button color="red" onClick={handleGoogle}>
+                        Login as Google
+                    </Button>
                 </div>
             </div>
         </>
