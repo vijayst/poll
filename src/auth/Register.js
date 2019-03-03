@@ -9,6 +9,7 @@ import {
     hasLengthGreaterThan,
     matchesField
 } from 'revalidate';
+import { hasError } from 'revalidate/assertions';
 
 import styles from './register.module.css';
 import MessageDispatchContext from '../common/MessageDispatchContext';
@@ -55,8 +56,8 @@ export default function Register(props) {
             repeat
         };
         const errors = formValidator(formObj);
-        if (Object.values(errors).every(error => !error)) {
-            setError({});
+        setError(errors);
+        if (!hasError(errors)) {
             try {
                 const result = await firebase
                     .auth()
@@ -76,8 +77,6 @@ export default function Register(props) {
                     payload: { text: 'Error in creating user', error: true }
                 });
             }
-        } else {
-            setError(errors);
         }
     }
 
