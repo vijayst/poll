@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu } from 'semantic-ui-react';
 import { withRouter } from 'react-router-dom';
+import firebase from '../util/firebase';
 
 const ROUTE_MAP = {
     home: '/',
@@ -12,12 +13,14 @@ const ROUTE_MAP = {
 
 function MyMenu(props) {
     const [activeItem, setActiveItem] = useState('home');
+    const user = firebase.auth().currentUser;
+    const loggedIn = !!user;
     function handleItemClick(e, { name }) {
         setActiveItem(name);
         props.history.push(ROUTE_MAP[name]);
     }
 
-    return props.loggedIn ? (
+    return loggedIn ? (
         <Menu secondary style={{ marginTop: 0, marginRight: 24 }}>
             <Menu.Item
                 name="home"
