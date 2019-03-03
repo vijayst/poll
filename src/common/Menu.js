@@ -14,14 +14,19 @@ const ROUTE_MAP = {
 function MyMenu(props) {
     const [activeItem, setActiveItem] = useState('home');
     const user = firebase.auth().currentUser;
-    const loggedIn = !!user;
+    const [loggedIn, setLoggedIn] = useState(!!user);
+
+    firebase.auth().onAuthStateChanged(user => {
+        setLoggedIn(!!user);
+    });
+
     function handleItemClick(e, { name }) {
         setActiveItem(name);
         props.history.push(ROUTE_MAP[name]);
     }
 
     return loggedIn ? (
-        <Menu secondary style={{ marginTop: 0, marginRight: 24 }}>
+        <Menu inverted secondary style={{ marginTop: 0, marginRight: 24 }}>
             <Menu.Item
                 name="home"
                 active={activeItem === 'home'}
