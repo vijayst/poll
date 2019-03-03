@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import styles from './pollform.module.css';
 import { Form, Label, Button } from 'semantic-ui-react';
 import pollformReducer from './pollformReducer';
+import { isRequired, combineValidators } from 'revalidate';
 
 const initialState = {
     question: '',
@@ -49,10 +50,44 @@ export default function PollForm() {
                 optionIndex: i,
                 option: e.target.value
             }
-        })
+        });
     }
 
-    function handleSubmit() {}
+    function getValidator() {
+        const validators = {
+            question: isRequired('Question'),
+            option1: isRequired('Option 1'),
+            option2: isRequired('Option 2')
+        };
+        options.forEach((option, index) => {
+            validators[`option${index + 3}`] = isRequired(
+                `Option ${index + 3}`
+            );
+        });
+        return combineValidators(validators);
+    }
+
+    function getFormValues() {
+        const formValues = {
+            question,
+            option1,
+            option2
+        };
+        options.forEach((option, index) => {
+            formValues[`option${index + 3}`] = option;
+        });
+        return formValues;
+    }
+
+    function handleSubmit() {
+        const formValidator = getValidator();
+        const formValues = getFormValues();
+        const error = formValidator(formValues);
+        dispatch({
+            type: 'SET_ERROR',
+            payload: { error }
+        });
+    }
 
     return (
         <div className={styles.form}>
