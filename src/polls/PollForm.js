@@ -3,6 +3,9 @@ import styles from './pollform.module.css';
 import { Form, Label, Button, Input } from 'semantic-ui-react';
 import pollformReducer from './pollformReducer';
 import { isRequired, combineValidators } from 'revalidate';
+import { hasError } from 'revalidate/assertions';
+import cuid from 'cuid';
+import firebase from '../util/firebase';
 
 const initialState = {
     question: '',
@@ -86,7 +89,7 @@ export default function PollForm() {
         return formValues;
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         const formValidator = getValidator();
         const formValues = getFormValues();
         const error = formValidator(formValues);
@@ -94,6 +97,26 @@ export default function PollForm() {
             type: 'SET_ERROR',
             payload: { error }
         });
+        if (!hasError(error)) {
+            const uid = cuid();
+            let allOptions = [option1, option2, ...options];
+            allOptions = allOptions.map(option => ({
+                text: option,
+                count: 0
+            }));
+            const user = firebase.auth().currentUser;
+            const data = {
+                uid,
+                question,
+                createdBy: {
+                    uid: user.uid,
+                    name: user.displayName
+                },
+                createdOn: firebase.firestore.FieldValue.serverTimestamp(),
+                options: allOptions
+            }
+            await firebase.firestore().collection('polls').doc(uid).set(data);
+        }
     }
 
     return (
@@ -140,7 +163,7 @@ export default function PollForm() {
                     )}
                 </Form.Field>
                 {options.map((option, index) => (
-                    <Form.Field error={!!error[`option${index + 3}`]}>
+                    <Form.Field key={index} error={!!error[`option${index + 3}`]}>
                         <label>Option {index + 3}</label>
                         <Input
                             placeholder={`Option ${index + 3}`}
