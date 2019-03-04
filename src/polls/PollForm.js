@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext } from 'react';
 import styles from './pollform.module.css';
 import { Form, Label, Button, Input } from 'semantic-ui-react';
 import pollformReducer from './pollformReducer';
@@ -6,6 +6,7 @@ import { isRequired, combineValidators } from 'revalidate';
 import { hasError } from 'revalidate/assertions';
 import cuid from 'cuid';
 import firebase from '../util/firebase';
+import MessageDispatchContext from '../common/MessageDispatchContext';
 
 const initialState = {
     question: '',
@@ -15,7 +16,8 @@ const initialState = {
     error: {}
 };
 
-export default function PollForm() {
+export default function PollForm(props) {
+    const messageDispatch = useContext(MessageDispatchContext);
     const [state, dispatch] = useReducer(pollformReducer, initialState);
     const { question, option1, option2, options, error } = state;
 
@@ -114,8 +116,25 @@ export default function PollForm() {
                 },
                 createdOn: firebase.firestore.FieldValue.serverTimestamp(),
                 options: allOptions
+            };
+            try {
+                await firebase
+                    .firestore()
+                    .collection('polls')
+                    .doc(uid)
+                    .set(data);
+                messageDispatch({
+                    type: 'SET_MESSAGE',
+                    payload: { text: 'Poll is created' }
+                });
+                props.history.push('polls/my');
+            } catch (err) {
+                console.log(err);
+                messageDispatch({
+                    type: 'SET_MESSAGE',
+                    payload: { text: 'Unable to create poll', error }
+                });
             }
-            await firebase.firestore().collection('polls').doc(uid).set(data);
         }
     }
 
@@ -163,13 +182,21 @@ export default function PollForm() {
                     )}
                 </Form.Field>
                 {options.map((option, index) => (
-                    <Form.Field key={index} error={!!error[`option${index + 3}`]}>
+                    <Form.Field
+                        key={index}
+                        error={!!error[`option${index + 3}`]}
+                    >
                         <label>Option {index + 3}</label>
                         <Input
                             placeholder={`Option ${index + 3}`}
                             value={option}
                             onChange={handleOptionChange.bind(null, index)}
-                            action={{ color: 'red', icon: 'close', type: 'button', onClick: handleOptionRemove.bind(null, index) }}
+                            action={{
+                                color: 'red',
+                                icon: 'close',
+                                type: 'button',
+                                onClick: handleOptionRemove.bind(null, index)
+                            }}
                         />
                         {error[`option${index + 3}`] && (
                             <Label basic color="red" pointing>
