@@ -1,0 +1,17 @@
+.page {
+    font-family: 'Ubuntu';
+    padding: 1rem;
+}
+
+.question {
+    font-size: 1.5rem;
+}
+
+.list {
+    margin: 1rem;
+}
+
+.list li {
+    font-size: 1.2rem;
+    padding: 0.3rem 1rem;
+}
