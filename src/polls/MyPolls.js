@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import firebase from '../util/firebase';
-import { Segment, Button } from 'semantic-ui-react';
+import { Segment, Button, Header } from 'semantic-ui-react';
 import UserContext from '../auth/UserContext';
 import styles from './mypolls.module.css';
 import DeleteModal from './DeleteModal';
+import { Link } from 'react-router-dom';
 
 let pollId;
 
@@ -40,7 +41,11 @@ export default function MyPolls() {
 
     async function handleDelete() {
         try {
-            await firebase.firestore().collection("polls").doc(pollId).delete();
+            await firebase
+                .firestore()
+                .collection('polls')
+                .doc(pollId)
+                .delete();
             const index = polls.findIndex(p => p.uid === pollId);
             if (index !== -1) {
                 polls = polls.slice();
@@ -48,7 +53,7 @@ export default function MyPolls() {
                 setPolls(polls);
             }
             setOpen(false);
-        } catch(err) {
+        } catch (err) {
             console.log(err);
         }
     }
@@ -56,6 +61,14 @@ export default function MyPolls() {
     return (
         <div className={styles.page}>
             <h1>My Polls</h1>
+            {polls.length === 0 && (
+                <Segment placeholder>
+                    <Header icon>
+                        No polls created by you
+                    </Header>
+                    <Button primary as={Link} to="/polls/create">Create Poll</Button>
+                </Segment>
+            )}
             {polls.map(poll => (
                 <Segment.Group style={{ marginBottom: 32 }} key={poll.uid}>
                     <Segment>
@@ -77,7 +90,11 @@ export default function MyPolls() {
                     </Segment>
                 </Segment.Group>
             ))}
-            <DeleteModal open={open} onClose={handleClose} onAction={handleDelete} />
+            <DeleteModal
+                open={open}
+                onClose={handleClose}
+                onAction={handleDelete}
+            />
         </div>
     );
 }
