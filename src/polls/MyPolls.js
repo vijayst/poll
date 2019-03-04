@@ -5,8 +5,10 @@ import UserContext from '../auth/UserContext';
 import styles from './mypolls.module.css';
 import DeleteModal from './DeleteModal';
 
+let pollId;
+
 export default function MyPolls() {
-    const [polls, setPolls] = useState([]);
+    let [polls, setPolls] = useState([]);
     const [open, setOpen] = useState(false);
     const user = useContext(UserContext);
 
@@ -27,12 +29,28 @@ export default function MyPolls() {
         }
     }, [user]);
 
-    function handleOpen() {
+    function handleOpen(id) {
         setOpen(true);
+        pollId = id;
     }
 
     function handleClose() {
         setOpen(false);
+    }
+
+    async function handleDelete() {
+        try {
+            await firebase.firestore().collection("polls").doc(pollId).delete();
+            const index = polls.findIndex(p => p.uid === pollId);
+            if (index !== -1) {
+                polls = polls.slice();
+                polls.splice(index, 1);
+                setPolls(polls);
+            }
+            setOpen(false);
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     return (
@@ -54,12 +72,12 @@ export default function MyPolls() {
                             type="button"
                             color="red"
                             content="Delete"
-                            onClick={handleOpen}
+                            onClick={handleOpen.bind(null, poll.uid)}
                         />
                     </Segment>
                 </Segment.Group>
             ))}
-            <DeleteModal open={open} onClose={handleClose} />
+            <DeleteModal open={open} onClose={handleClose} onAction={handleDelete} />
         </div>
     );
 }
