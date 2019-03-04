@@ -127,7 +127,7 @@ export default function PollForm(props) {
                     type: 'SET_MESSAGE',
                     payload: { text: 'Poll is created' }
                 });
-                props.history.push('polls/my');
+                props.history.push('/polls/my');
             } catch (err) {
                 console.log(err);
                 messageDispatch({
