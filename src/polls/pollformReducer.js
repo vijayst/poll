@@ -27,6 +27,16 @@ export default function pollReducer(state, action) {
                 options
             };
         }
+        case 'REMOVE_OPTION': {
+            const { optionIndex } = action.payload;
+            let { options } = state;
+            options = options.slice();
+            options.splice(optionIndex, 1);
+            return {
+                ...state,
+                options
+            };
+        }
         default:
             return state;
     }

@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import styles from './pollform.module.css';
-import { Form, Label, Button } from 'semantic-ui-react';
+import { Form, Label, Button, Input } from 'semantic-ui-react';
 import pollformReducer from './pollformReducer';
 import { isRequired, combineValidators } from 'revalidate';
 
@@ -40,6 +40,13 @@ export default function PollForm() {
     function handleOptionAdd() {
         dispatch({
             type: 'ADD_OPTION'
+        });
+    }
+
+    function handleOptionRemove(optionIndex) {
+        dispatch({
+            type: 'REMOVE_OPTION',
+            payload: { optionIndex }
         });
     }
 
@@ -135,10 +142,11 @@ export default function PollForm() {
                 {options.map((option, index) => (
                     <Form.Field error={!!error[`option${index + 3}`]}>
                         <label>Option {index + 3}</label>
-                        <input
+                        <Input
                             placeholder={`Option ${index + 3}`}
                             value={option}
                             onChange={handleOptionChange.bind(null, index)}
+                            action={{ color: 'red', icon: 'close', type: 'button', onClick: handleOptionRemove.bind(null, index) }}
                         />
                         {error[`option${index + 3}`] && (
                             <Label basic color="red" pointing>
