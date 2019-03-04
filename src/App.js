@@ -40,7 +40,7 @@ function App(props) {
             <MessageDispatchContext.Provider value={dispatch}>
                 <div className={styles.app}>
                     <header>
-                        <div className={styles.brand}>Pollz</div>
+                        <div className={styles.brand}>Pollsy.co</div>
                         <Menu />
                     </header>
                     <main>
