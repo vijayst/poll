@@ -6,20 +6,55 @@ import styles from './home.module.css';
 import { Link } from 'react-router-dom';
 
 function Options(props) {
-    const [answer, setAnswer] = useState(null);
+    const { poll, user } = props;
+    let initialAnswer = null;
+    if (poll.votes) {
+        const vote = poll.votes.find(v => v.userId === user.uid);
+        if (vote) {
+            initialAnswer = `${vote.optionIndex + 1}`;
+        }
+    }
+    const [answer, setAnswer] = useState(initialAnswer);
 
-    function handleSelect(e, { value }) {
+    async function handleSelect(e, { value }) {
         setAnswer(value);
+        const newPoll = Object.assign({}, poll);
+        const optionIndex = parseInt(value) - 1;
+        newPoll.options[optionIndex].count += 1;
+        const userId = user.uid;
+        if (!newPoll.votes) {
+            newPoll.votes = [{
+                userId,
+                optionIndex
+            }];
+        } else {
+            const vote = newPoll.votes.find(v => v.userId === userId);
+            if (vote) {
+                // this should never happen!
+                vote.optionIndex = optionIndex;
+            } else {
+                newPoll.votes.push({
+                    userId,
+                    optionIndex
+                });
+            }
+        }
+        await firebase
+            .firestore()
+            .collection('polls')
+            .doc(newPoll.uid)
+            .set(newPoll);
     }
 
     return props.options.map((option, index) => (
         <Form.Field key={index}>
             <Radio
-                label={option.text}
+                label={answer ? `${option.text} (${option.count} votes)` : option.text}
                 name="options"
                 value={`${index + 1}`}
                 checked={answer === `${index + 1}`}
                 onChange={handleSelect}
+                disabled={!!answer}
             />
         </Form.Field>
     ));
@@ -64,7 +99,7 @@ export default function Home() {
                     <Segment style={{ marginBottom: 32 }} key={poll.uid}>
                         <div className={styles.question}>{poll.question}</div>
                         <Form>
-                            <Options options={poll.options} />
+                            <Options user={user} poll={poll} options={poll.options} />
                         </Form>
                     </Segment>
                 ) : (
