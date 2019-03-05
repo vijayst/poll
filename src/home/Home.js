@@ -1,11 +1,31 @@
 import React, { useState, useEffect, useContext } from 'react';
 import firebase from '../util/firebase';
-import { Segment, Header, Button } from 'semantic-ui-react';
+import { Segment, Header, Button, Form, Radio } from 'semantic-ui-react';
 import UserContext from '../auth/UserContext';
 import styles from './home.module.css';
 import { Link } from 'react-router-dom';
 
-export default function MyPolls() {
+function Options(props) {
+    const [answer, setAnswer] = useState(null);
+
+    function handleSelect(e, { value }) {
+        setAnswer(value);
+    }
+
+    return props.options.map((option, index) => (
+        <Form.Field key={index}>
+            <Radio
+                label={option.text}
+                name="options"
+                value={`${index + 1}`}
+                checked={answer === `${index + 1}`}
+                onChange={handleSelect}
+            />
+        </Form.Field>
+    ));
+}
+
+export default function Home() {
     let [polls, setPolls] = useState([]);
     const user = useContext(UserContext);
 
@@ -39,16 +59,25 @@ export default function MyPolls() {
                     </Button>
                 </Segment>
             ) : null}
-            {polls.map(poll => (
-                <Segment style={{ marginBottom: 32 }} key={poll.uid}>
-                    <div className={styles.question}>{poll.question}</div>
-                    <ol className={styles.list}>
-                        {poll.options.map((option, index) => (
-                            <li key={index}>{option.text}</li>
-                        ))}
-                    </ol>
-                </Segment>
-            ))}
+            {polls.map(poll =>
+                user ? (
+                    <Segment style={{ marginBottom: 32 }} key={poll.uid}>
+                        <div className={styles.question}>{poll.question}</div>
+                        <Form>
+                            <Options options={poll.options} />
+                        </Form>
+                    </Segment>
+                ) : (
+                    <Segment style={{ marginBottom: 32 }} key={poll.uid}>
+                        <div className={styles.question}>{poll.question}</div>
+                        <ol className={styles.list}>
+                            {poll.options.map((option, index) => (
+                                <li key={index}>{option.text}</li>
+                            ))}
+                        </ol>
+                    </Segment>
+                )
+            )}
         </div>
     );
 }
