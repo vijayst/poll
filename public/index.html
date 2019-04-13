@@ -6,7 +6,7 @@
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
-        />  
+        />
         <meta name="theme-color" content="#000000" />
         <link
             href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,700"
@@ -23,35 +23,37 @@
             itemprop="description"
             content="Online polls - Ask anything and get feedback"
         />
-        <meta
-            itemprop="image"
-            content="https://www.pollsy.co/pollsy.png"
-        />
-        <meta
-            name="twitter:card"
-            content="https://www.pollsy.co/pollsy.png"
-        />
+        <meta itemprop="image" content="https://www.pollsy.co/pollsy.png" />
+        <meta name="twitter:card" content="https://www.pollsy.co/pollsy.png" />
         <meta name="twitter:title" content="Pollsy" />
         <meta
             name="twitter:description"
             content="Online polls - Ask anything and get feedback"
         />
-        <meta
-            name="twitter:image"
-            content="https://www.pollsy.co/pollsy.png"
-        />
+        <meta name="twitter:image" content="https://www.pollsy.co/pollsy.png" />
         <meta property="og:title" content="Pollsy" />
         <meta property="og:type" content="product" />
         <meta property="og:url" content="https://www.pollsy.co" />
-        <meta
-            property="og:image"
-            content="https://www.pollsy.co/pollsy.png"
-        />
+        <meta property="og:image" content="https://www.pollsy.co/pollsy.png" />
         <meta
             property="og:description"
             content="Online polls - Ask anything and get feedback"
         />
         <meta property="og:site_name" content="Pollsy" />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_ANALYTICS_ID%"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', '%REACT_APP_ANALYTICS_ID%');
+        </script>
     </head>
     <body>
         <div id="root"></div>
