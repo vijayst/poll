@@ -1,39 +1,20 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import styles from './login.module.css';
 import { Form, Button, Divider } from 'semantic-ui-react';
-import firebase from '../util/firebase';
-import MessageDispatchContext from '../common/MessageDispatchContext';
+import { connect } from 'react-redux';
+import { login, loginAsGoogle } from './actions';
 
-export default function Login(props) {
+function Login(props) {
+    const { login, loginAsGoogle } = props;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useContext(MessageDispatchContext);
 
     async function handleSubmit() {
-        try {
-            await firebase.auth().signInWithEmailAndPassword(email, password);
-            props.history.push('/');
-        } catch (err) {
-            console.log(err);
-            dispatch({
-                type: 'SET_MESSAGE',
-                payload: { text: 'Error in login', error: true }
-            });
-        }
+        login(email, password);
     }
 
     async function handleGoogle() {
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await firebase.auth().signInWithPopup(provider);
-            props.history.push('/');
-        } catch (err) {
-            console.log(err);
-            dispatch({
-                type: 'SET_MESSAGE',
-                payload: { text: 'Error in login', error: true }
-            });
-        }
+        loginAsGoogle();
     }
 
     return (
@@ -74,3 +55,13 @@ export default function Login(props) {
         </div>
     );
 }
+
+const dispatchProps = {
+    login,
+    loginAsGoogle
+};
+
+export default connect(
+    null,
+    dispatchProps
+)(Login);

@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Label, Divider } from 'semantic-ui-react';
-import firebase from '../util/firebase';
+import { connect } from 'react-redux';
 import {
     createValidator,
     composeValidators,
@@ -10,9 +10,8 @@ import {
     matchesField
 } from 'revalidate';
 import { hasError } from 'revalidate/assertions';
-
 import styles from './register.module.css';
-import MessageDispatchContext from '../common/MessageDispatchContext';
+import { register, loginAsGoogle } from './actions';
 
 const isEmail = createValidator(
     message => value => {
@@ -40,13 +39,13 @@ const formValidator = combineValidators({
     )('Repeat Password')
 });
 
-export default function Register(props) {
+function Register(props) {
+    const { register, loginAsGoogle } = props;
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeat, setRepeat] = useState('');
     const [error, setError] = useState({});
-    const dispatch = useContext(MessageDispatchContext);
 
     async function handleSubmit() {
         const formObj = {
@@ -58,44 +57,12 @@ export default function Register(props) {
         const errors = formValidator(formObj);
         setError(errors);
         if (!hasError(errors)) {
-            try {
-                const result = await firebase
-                    .auth()
-                    .createUserWithEmailAndPassword(email, password);
-                await result.user.updateProfile({
-                    displayName: name
-                });
-                dispatch({
-                    type: 'SET_MESSAGE',
-                    payload: { text: 'User is created' }
-                });
-                props.history.push('/');
-            } catch (err) {
-                console.log(err);
-                dispatch({
-                    type: 'SET_MESSAGE',
-                    payload: { text: 'Error in creating user', error: true }
-                });
-            }
+            register();
         }
     }
 
     async function handleGoogle() {
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await firebase.auth().signInWithPopup(provider);
-            dispatch({
-                type: 'SET_MESSAGE',
-                payload: { text: 'User is created' }
-            });
-            props.history.push('/');
-        } catch (err) {
-            console.log(err);
-            dispatch({
-                type: 'SET_MESSAGE',
-                payload: { text: 'Error in creating user', error: true }
-            });
-        }
+        loginAsGoogle();
     }
 
     return (
@@ -173,3 +140,13 @@ export default function Register(props) {
         </div>
     );
 }
+
+const dispatchProps = {
+    register,
+    loginAsGoogle
+};
+
+export default connect(
+    null,
+    dispatchProps
+)(Register);

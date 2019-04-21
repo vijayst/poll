@@ -1,20 +1,20 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './login.module.css';
 import { Form, Button, Label } from 'semantic-ui-react';
-import firebase from '../util/firebase';
-import MessageDispatchContext from '../common/MessageDispatchContext';
 import UserContext from './UserContext';
 import { combineValidators, isRequired } from 'revalidate';
 import { hasError } from 'revalidate/assertions';
+import { updateProfile } from './actions';
+import { connect } from 'react-redux';
 
 const formValidator = combineValidators({
     name: isRequired('Display Name')
 });
 
-export default function Profile(props) {
+function Profile(props) {
+    const { updateProfile } = props;
     const user = useContext(UserContext);
     const [name, setName] = useState(user ? user.displayName : '');
-    const dispatch = useContext(MessageDispatchContext);
     const [error, setError] = useState({});
 
     useEffect(() => {
@@ -26,16 +26,7 @@ export default function Profile(props) {
         const error = formValidator(formValues);
         setError(error);
         if (!hasError(error)) {
-            const user = firebase.auth().currentUser;
-            await user.updateProfile({
-                displayName: name
-            });
-            dispatch({
-                type: 'SET_MESSAGE',
-                payload: {
-                    text: 'Profile is updated'
-                }
-            });
+            updateProfile();
         }
     }
 
@@ -65,3 +56,12 @@ export default function Profile(props) {
         </div>
     );
 }
+
+const dispatchProps = {
+    updateProfile
+};
+
+export default connect(
+    null,
+    dispatchProps
+)(Profile);

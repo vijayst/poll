@@ -1,12 +1,12 @@
 import React, { useEffect, useContext } from 'react';
 import styles from './message.module.css';
-import MessageDispatchContext from './MessageDispatchContext';
+import { connect } from 'react-redux';
+import { closeMessage } from './actions';
 
-export default function Message(props) {
-    const dispatch = useContext(MessageDispatchContext)
+function Message(props) {
     useEffect(() => {
         setTimeout(() => {
-            dispatch({ type: 'CLEAR_MESSAGE' });
+            props.closeMessage();
         }, 5000);
     });
 
@@ -16,3 +16,12 @@ export default function Message(props) {
         </div>
     );
 }
+
+const dispatchProps = {
+    closeMessage
+};
+
+export default connect(
+    null,
+    dispatchProps
+)(Message);

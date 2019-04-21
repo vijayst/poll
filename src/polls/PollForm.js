@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer } from 'react';
 import styles from './pollform.module.css';
 import { Form, Label, Button, Input } from 'semantic-ui-react';
 import pollformReducer from './pollformReducer';
@@ -6,7 +6,6 @@ import { isRequired, combineValidators } from 'revalidate';
 import { hasError } from 'revalidate/assertions';
 import cuid from 'cuid';
 import firebase from '../util/firebase';
-import MessageDispatchContext from '../common/MessageDispatchContext';
 
 const initialState = {
     question: '',
@@ -17,7 +16,6 @@ const initialState = {
 };
 
 export default function PollForm(props) {
-    const messageDispatch = useContext(MessageDispatchContext);
     const [state, dispatch] = useReducer(pollformReducer, initialState);
     const { question, option1, option2, options, error } = state;
 
@@ -123,17 +121,17 @@ export default function PollForm(props) {
                     .collection('polls')
                     .doc(uid)
                     .set(data);
-                messageDispatch({
-                    type: 'SET_MESSAGE',
-                    payload: { text: 'Poll is created' }
-                });
+                // messageDispatch({
+                //     type: 'SET_MESSAGE',
+                //     payload: { text: 'Poll is created' }
+                // });
                 props.history.push('/polls/my');
             } catch (err) {
                 console.log(err);
-                messageDispatch({
-                    type: 'SET_MESSAGE',
-                    payload: { text: 'Unable to create poll', error }
-                });
+                // messageDispatch({
+                //     type: 'SET_MESSAGE',
+                //     payload: { text: 'Unable to create poll', error }
+                // });
             }
         }
     }
