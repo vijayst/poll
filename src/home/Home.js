@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import firebase from '../util/firebase';
-import { Segment, Header, Button, Form, Radio } from 'semantic-ui-react';
+import {
+    Segment,
+    Header,
+    Button,
+    Form,
+    Radio,
+    Dimmer,
+    Loader
+} from 'semantic-ui-react';
 import styles from './home.module.css';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -66,8 +74,9 @@ function Options(props) {
     ));
 }
 
-function Home({ user }) {
+function Home({ user, loggedIn, loginPending }) {
     let [polls, setPolls] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         firebase
@@ -80,8 +89,33 @@ function Home({ user }) {
                     polls.push(doc.data());
                 });
                 setPolls(polls);
+                setLoading(false);
+            })
+            .catch(error => {
+                setLoading(false);
             });
     }, []);
+
+    if (loginPending || loading) {
+        return (
+            <Segment placeholder>
+                <Dimmer active inverted>
+                    <Loader inverted>Loading</Loader>
+                </Dimmer>
+            </Segment>
+        );
+    }
+
+    if (!loggedIn) {
+        return (
+            <Segment placeholder>
+                <Header icon>Login to poll</Header>
+                <Button primary as={Link} to="/login">
+                    Login
+                </Button>
+            </Segment>
+        );
+    }
 
     return (
         <div className={styles.page}>
@@ -91,44 +125,27 @@ function Home({ user }) {
                     <Header icon>There are no open polls!!!</Header>
                 </Segment>
             )}
-            {polls.length && !user ? (
-                <Segment placeholder>
-                    <Header icon>Login to poll</Header>
-                    <Button primary as={Link} to="/login">
-                        Login
-                    </Button>
+            {polls.map(poll => (
+                <Segment style={{ marginBottom: 32 }} key={poll.uid}>
+                    <div className={styles.question}>{poll.question}</div>
+                    <Form>
+                        <Options
+                            user={user}
+                            poll={poll}
+                            options={poll.options}
+                        />
+                    </Form>
                 </Segment>
-            ) : null}
-            {polls.map(poll =>
-                user ? (
-                    <Segment style={{ marginBottom: 32 }} key={poll.uid}>
-                        <div className={styles.question}>{poll.question}</div>
-                        <Form>
-                            <Options
-                                user={user}
-                                poll={poll}
-                                options={poll.options}
-                            />
-                        </Form>
-                    </Segment>
-                ) : (
-                    <Segment style={{ marginBottom: 32 }} key={poll.uid}>
-                        <div className={styles.question}>{poll.question}</div>
-                        <ol className={styles.list}>
-                            {poll.options.map((option, index) => (
-                                <li key={index}>{option.text}</li>
-                            ))}
-                        </ol>
-                    </Segment>
-                )
-            )}
+            ))}
         </div>
     );
 }
 
 function mapState(state) {
     return {
-        user: state.auth.currentUser
+        user: state.auth.currentUser,
+        loggedIn: state.auth.loggedIn,
+        loginPending: typeof state.auth.loggedIn === 'undefined'
     };
 }
 
