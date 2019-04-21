@@ -11,7 +11,6 @@ import {
 } from 'semantic-ui-react';
 import styles from './home.module.css';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 function Options(props) {
     const { poll, user } = props;
@@ -74,7 +73,7 @@ function Options(props) {
     ));
 }
 
-function Home({ user, loggedIn, loginPending }) {
+export default function Home({ user, loggedIn, loginPending }) {
     let [polls, setPolls] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -109,10 +108,18 @@ function Home({ user, loggedIn, loginPending }) {
     if (!loggedIn) {
         return (
             <Segment placeholder>
-                <Header icon>Login to poll</Header>
+                <Header icon>Login using Google to get started!</Header>
                 <Button primary as={Link} to="/login">
                     Login
                 </Button>
+                <Segment.Inline>
+                    <p style={{ marginTop: 100, textAlign: 'center' }}>
+                        The code for this project is in{' '}
+                        <a href="https://github.com/vijayst/poll">Github</a>.{' '}
+                        <br /> Pollsy uses Firebase for authentication, storage
+                        and hosting.
+                    </p>
+                </Segment.Inline>
             </Segment>
         );
     }
@@ -140,13 +147,3 @@ function Home({ user, loggedIn, loginPending }) {
         </div>
     );
 }
-
-function mapState(state) {
-    return {
-        user: state.auth.currentUser,
-        loggedIn: state.auth.loggedIn,
-        loginPending: typeof state.auth.loggedIn === 'undefined'
-    };
-}
-
-export default connect(mapState)(Home);
