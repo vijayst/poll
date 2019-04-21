@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from '../util/firebase';
 import { Segment, Button, Header } from 'semantic-ui-react';
-import UserContext from '../auth/UserContext';
 import styles from './mypolls.module.css';
 import DeleteModal from './DeleteModal';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 let pollId;
 
-export default function MyPolls() {
+function MyPolls(props) {
     let [polls, setPolls] = useState([]);
     const [open, setOpen] = useState(false);
-    const user = useContext(UserContext);
+    const { user } = props;
 
     useEffect(() => {
         if (user) {
@@ -63,10 +63,10 @@ export default function MyPolls() {
             <h1>My Polls</h1>
             {polls.length === 0 && (
                 <Segment placeholder>
-                    <Header icon>
-                        No polls created by you
-                    </Header>
-                    <Button primary as={Link} to="/polls/create">Create Poll</Button>
+                    <Header icon>No polls created by you</Header>
+                    <Button primary as={Link} to="/polls/create">
+                        Create Poll
+                    </Button>
                 </Segment>
             )}
             {polls.map(poll => (
@@ -98,3 +98,11 @@ export default function MyPolls() {
         </div>
     );
 }
+
+function mapState(state) {
+    return {
+        user: state.auth.currentUser
+    };
+}
+
+export default connect(mapState)(MyPolls);

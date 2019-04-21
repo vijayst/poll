@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './login.module.css';
 import { Form, Button, Label } from 'semantic-ui-react';
-import UserContext from './UserContext';
 import { combineValidators, isRequired } from 'revalidate';
 import { hasError } from 'revalidate/assertions';
 import { updateProfile } from './actions';
@@ -12,8 +11,7 @@ const formValidator = combineValidators({
 });
 
 function Profile(props) {
-    const { updateProfile } = props;
-    const user = useContext(UserContext);
+    const { user, updateProfile } = props;
     const [name, setName] = useState(user ? user.displayName : '');
     const [error, setError] = useState({});
 
@@ -57,11 +55,17 @@ function Profile(props) {
     );
 }
 
+function mapState(state) {
+    return {
+        user: state.auth.currentUser
+    };
+}
+
 const dispatchProps = {
     updateProfile
 };
 
 export default connect(
-    null,
+    mapState,
     dispatchProps
 )(Profile);

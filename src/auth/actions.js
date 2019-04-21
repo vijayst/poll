@@ -70,3 +70,11 @@ export function loginAsGoogle() {
         }
     };
 }
+
+export function getCurrentUser() {
+    return dispatch => {
+        firebase.auth().onAuthStateChanged(currentUser => {
+            dispatch({ type: 'SET_CURRENT_USER', payload: { currentUser } });
+        });
+    };
+}

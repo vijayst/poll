@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import firebase from '../util/firebase';
 import { Segment, Header, Button, Form, Radio } from 'semantic-ui-react';
-import UserContext from '../auth/UserContext';
 import styles from './home.module.css';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 function Options(props) {
     const { poll, user } = props;
@@ -23,10 +23,12 @@ function Options(props) {
         newPoll.options[optionIndex].count += 1;
         const userId = user.uid;
         if (!newPoll.votes) {
-            newPoll.votes = [{
-                userId,
-                optionIndex
-            }];
+            newPoll.votes = [
+                {
+                    userId,
+                    optionIndex
+                }
+            ];
         } else {
             const vote = newPoll.votes.find(v => v.userId === userId);
             if (vote) {
@@ -49,7 +51,11 @@ function Options(props) {
     return props.options.map((option, index) => (
         <Form.Field key={index}>
             <Radio
-                label={answer ? `${option.text} (${option.count} votes)` : option.text}
+                label={
+                    answer
+                        ? `${option.text} (${option.count} votes)`
+                        : option.text
+                }
                 name="options"
                 value={`${index + 1}`}
                 checked={answer === `${index + 1}`}
@@ -60,9 +66,8 @@ function Options(props) {
     ));
 }
 
-export default function Home() {
+function Home({ user }) {
     let [polls, setPolls] = useState([]);
-    const user = useContext(UserContext);
 
     useEffect(() => {
         firebase
@@ -99,7 +104,11 @@ export default function Home() {
                     <Segment style={{ marginBottom: 32 }} key={poll.uid}>
                         <div className={styles.question}>{poll.question}</div>
                         <Form>
-                            <Options user={user} poll={poll} options={poll.options} />
+                            <Options
+                                user={user}
+                                poll={poll}
+                                options={poll.options}
+                            />
                         </Form>
                     </Segment>
                 ) : (
@@ -116,3 +125,11 @@ export default function Home() {
         </div>
     );
 }
+
+function mapState(state) {
+    return {
+        user: state.auth.currentUser
+    };
+}
+
+export default connect(mapState)(Home);

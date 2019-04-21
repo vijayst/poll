@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect } from 'react';
 import styles from './message.module.css';
 import { connect } from 'react-redux';
 import { closeMessage } from './actions';
