@@ -10,8 +10,8 @@ import {
     Loader
 } from 'semantic-ui-react';
 import styles from './home.module.css';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { showLogin } from './actions';
 
 function Options(props) {
     const { poll, user } = props;
@@ -74,27 +74,30 @@ function Options(props) {
     ));
 }
 
-function Home({ user, loggedIn, loginPending }) {
+function Home({ user, loggedIn, loginPending, showLogin }) {
     let [polls, setPolls] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        firebase
-            .firestore()
-            .collection('polls')
-            .get()
-            .then(snapshot => {
-                const polls = [];
-                snapshot.forEach(doc => {
-                    polls.push(doc.data());
+        if (loggedIn) {
+            setLoading(true);
+            firebase
+                .firestore()
+                .collection('polls')
+                .get()
+                .then(snapshot => {
+                    const polls = [];
+                    snapshot.forEach(doc => {
+                        polls.push(doc.data());
+                    });
+                    setPolls(polls);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setLoading(false);
                 });
-                setPolls(polls);
-                setLoading(false);
-            })
-            .catch(error => {
-                setLoading(false);
-            });
-    }, []);
+        }
+    }, [loggedIn]);
 
     if (loginPending || loading) {
         return (
@@ -110,7 +113,7 @@ function Home({ user, loggedIn, loginPending }) {
         return (
             <Segment placeholder>
                 <Header icon>Login using Google to get started!</Header>
-                <Button primary as={Link} to="/login">
+                <Button primary onClick={showLogin}>
                     Login
                 </Button>
                 <Segment.Inline>
@@ -157,4 +160,11 @@ function mapState(state) {
     };
 }
 
-export default connect(mapState)(Home);
+const dispatchProps = {
+    showLogin
+};
+
+export default connect(
+    mapState,
+    dispatchProps
+)(Home);

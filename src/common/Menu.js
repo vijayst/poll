@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, Dropdown } from 'semantic-ui-react';
 import { withRouter, Link } from 'react-router-dom';
 import firebase from '../util/firebase';
@@ -11,8 +11,20 @@ const ROUTE_MAP = {
     create: '/polls/create'
 };
 
+function getDefaultItem(pathname) {
+    let item = 'home';
+    Object.keys(ROUTE_MAP).forEach(key => {
+        if (pathname === ROUTE_MAP[key]) {
+            item = key;
+        }
+    });
+    return item;
+}
+
 function MyMenu(props) {
-    const [activeItem, setActiveItem] = useState('home');
+    const [activeItem, setActiveItem] = useState(
+        getDefaultItem(props.location.pathname)
+    );
     const { currentUser } = firebase.auth();
     const [user, setUser] = useState(currentUser);
     const loggedIn = !!user;
@@ -21,6 +33,9 @@ function MyMenu(props) {
         setUser(currentUser);
     });
 
+    useEffect(() => {
+        setActiveItem(getDefaultItem(props.location.pathname));
+    }, [props.location.pathname]);
 
     function handleItemClick(e, { name }) {
         setActiveItem(name);
@@ -54,14 +69,19 @@ function MyMenu(props) {
             />
             <Menu.Item>
                 <Dropdown pointing="top left" text={user.displayName}>
-                <Dropdown.Menu>
-                    <Dropdown.Item as={Link} to={`/profile`} text="My Profile" icon="user" />
-                    <Dropdown.Item
-                        text="Sign Out"
-                        icon="power"
-                        onClick={handleLogout}
-                    />
-                </Dropdown.Menu>
+                    <Dropdown.Menu>
+                        <Dropdown.Item
+                            as={Link}
+                            to={`/profile`}
+                            text="My Profile"
+                            icon="user"
+                        />
+                        <Dropdown.Item
+                            text="Sign Out"
+                            icon="power"
+                            onClick={handleLogout}
+                        />
+                    </Dropdown.Menu>
                 </Dropdown>
             </Menu.Item>
         </Menu>
