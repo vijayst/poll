@@ -11,6 +11,7 @@ import Message from './common/Message';
 import Profile from './auth/Profile';
 import { connect } from 'react-redux';
 import { getCurrentUser } from './auth/actions';
+import requireAuth from './common/requireAuth';
 
 function App(props) {
     const { message } = props;
@@ -27,12 +28,15 @@ function App(props) {
             </header>
             <main>
                 <Switch>
-                    <Route path="/" exact component={Home} />
+                    <Route path="/" exact component={requireAuth(Home)} />
                     <Route path="/login" component={Login} />
                     <Route path="/register" component={Register} />
-                    <Route path="/polls/my" component={MyPolls} />
-                    <Route path="/polls/create" component={PollForm} />
-                    <Route path="/profile" component={Profile} />
+                    <Route path="/polls/my" component={requireAuth(MyPolls)} />
+                    <Route
+                        path="/polls/create"
+                        component={requireAuth(PollForm)}
+                    />
+                    <Route path="/profile" component={requireAuth(Profile)} />
                 </Switch>
             </main>
             {message.text && <Message {...message} />}

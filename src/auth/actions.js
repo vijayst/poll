@@ -1,5 +1,6 @@
 import firebase from '../util/firebase';
 import { push } from 'connected-react-router';
+import qs from 'qs';
 
 export function register(email, password, displayName) {
     return async dispatch => {
@@ -26,10 +27,16 @@ export function register(email, password, displayName) {
 }
 
 export function login(email, password) {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
             await firebase.auth().signInWithEmailAndPassword(email, password);
-            dispatch(push('/'));
+            const query = getState().router.location.search;
+            const { redirect } = qs.parse(query, { ignoreQueryPrefix: true });
+            if (redirect) {
+                dispatch(push(redirect));
+            } else {
+                dispatch(push('/'));
+            }
         } catch (err) {
             console.log(err);
             dispatch({
@@ -56,11 +63,17 @@ export function updateProfile(displayName) {
 }
 
 export function loginAsGoogle() {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
             await firebase.auth().signInWithPopup(provider);
-            dispatch(push('/'));
+            const query = getState().router.location.search;
+            const { redirect } = qs.parse(query, { ignoreQueryPrefix: true });
+            if (redirect) {
+                dispatch(push(redirect));
+            } else {
+                dispatch(push('/'));
+            }
         } catch (err) {
             console.log(err);
             dispatch({
