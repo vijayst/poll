@@ -11,6 +11,7 @@ import {
 } from 'semantic-ui-react';
 import styles from './home.module.css';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 function Options(props) {
     const { poll, user } = props;
@@ -73,7 +74,7 @@ function Options(props) {
     ));
 }
 
-export default function Home({ user, loggedIn, loginPending }) {
+function Home({ user, loggedIn, loginPending }) {
     let [polls, setPolls] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -147,3 +148,13 @@ export default function Home({ user, loggedIn, loginPending }) {
         </div>
     );
 }
+
+function mapState(state) {
+    return {
+        loggedIn: state.auth.loggedIn,
+        loginPending: state.auth.loginPending,
+        user: state.auth.currentUser
+    };
+}
+
+export default connect(mapState)(Home);
