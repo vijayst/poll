@@ -16,7 +16,7 @@
     "react-redux": "^9.1.0",
     "@reduxjs/toolkit": "^2.2.0",
     "firebase": "^10.8.0",
-    "next-auth": "^4.24.0",
+    "next-auth": "^4.24.15",
     "revalidate": "^1.2.0",
     "@paralleldrive/cuid2": "^2.2.0",
     "clsx": "^2.1.0",
